@@ -37,7 +37,7 @@ public class RegistrationDAO {
             if (conn.isValid(0)) {
                 
                 // INSERT YOUR CODE HERE
-                ps = conn.prepareStatement(QUERY_CREATE, Statement.RETURN_GENERATED_KEYS);
+                ps = conn.prepareStatement(QUERY_CREATE);
                 ps.setInt(1, studentid);
                 ps.setInt(2, termid);
                 ps.setInt(3, crn);
@@ -45,13 +45,8 @@ public class RegistrationDAO {
                 int updateCount = ps.executeUpdate();
                 
                 if (updateCount > 0) {
-            
-                    rs = ps.getGeneratedKeys();
-
-                    if (rs.next()) {
                         
-                        result = true;
-                    }
+                    result = true;
 
                 }
                 
@@ -181,7 +176,7 @@ public class RegistrationDAO {
                 if (hasresults) {
 
                     rs = ps.getResultSet();
-                    DAOUtility.getResultSetAsJson(rs);
+                    result = DAOUtility.getResultSetAsJson(rs);
 
                 }
                 
@@ -198,7 +193,8 @@ public class RegistrationDAO {
             
         }
         
-        return Jsoner.serialize(result);
+        //return Jsoner.serialize(result);
+        return result;
         
     }
     

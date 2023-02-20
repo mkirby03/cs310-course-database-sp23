@@ -47,7 +47,7 @@ public class SectionDAO {
                 if (hasresults) {
 
                     rs = ps.getResultSet();
-                    DAOUtility.getResultSetAsJson(rs);
+                    result = DAOUtility.getResultSetAsJson(rs);
                   
                 }
                 
@@ -64,7 +64,8 @@ public class SectionDAO {
             
         }
         
-        return Jsoner.serialize(result);
+        //return Jsoner.serialize(result);
+        return result;
         
     }
     
