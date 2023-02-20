@@ -1,14 +1,21 @@
 package edu.jsu.mcis.cs310.coursedb.dao;
 
+import com.github.cliftonlabs.json_simple.JsonArray;
+import com.github.cliftonlabs.json_simple.Jsoner;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
+import java.util.LinkedHashMap;
 
 public class RegistrationDAO {
     
     // INSERT YOUR CODE HERE
+    private static final String QUERY_CREATE = "INSERT INTO registration (studentid, termid, crn) VALUES (?, ?, ?)";
+    private static final String QUERY_DELETE = "DELETE FROM registration WHERE studentid = ? AND termid = ? AND crn = ?";
+    private static final String QUERY_DELETE_TWO = "DELETE FROM registration WHERE studentid = ? AND termid = ?";
+    private static final String QUERY_LIST = "SELECT * FROM registration WHERE studentid = ? AND termid = ?";
     
     private final DAOFactory daoFactory;
     
@@ -30,6 +37,23 @@ public class RegistrationDAO {
             if (conn.isValid(0)) {
                 
                 // INSERT YOUR CODE HERE
+                ps = conn.prepareStatement(QUERY_CREATE, Statement.RETURN_GENERATED_KEYS);
+                ps.setInt(1, studentid);
+                ps.setInt(2, termid);
+                ps.setInt(3, crn);
+                
+                int updateCount = ps.executeUpdate();
+                
+                if (updateCount > 0) {
+            
+                    rs = ps.getGeneratedKeys();
+
+                    if (rs.next()) {
+                        
+                        result = true;
+                    }
+
+                }
                 
             }
             
@@ -61,7 +85,18 @@ public class RegistrationDAO {
             if (conn.isValid(0)) {
                 
                 // INSERT YOUR CODE HERE
+                ps = conn.prepareStatement(QUERY_DELETE);
+                ps.setInt(1, studentid);
+                ps.setInt(2, termid);
+                ps.setInt(3, crn);
                 
+                int updateCount = ps.executeUpdate();
+                
+                if (updateCount > 0) {
+            
+                    result = true;
+
+                }
             }
             
         }
@@ -91,6 +126,17 @@ public class RegistrationDAO {
             if (conn.isValid(0)) {
                 
                 // INSERT YOUR CODE HERE
+                ps = conn.prepareStatement(QUERY_DELETE_TWO);
+                ps.setInt(1, studentid);
+                ps.setInt(2, termid);
+                
+                int updateCount = ps.executeUpdate();
+                
+                if (updateCount > 0) {
+            
+                    result = true;
+
+                }
                 
             }
             
@@ -110,7 +156,7 @@ public class RegistrationDAO {
 
     public String list(int studentid, int termid) {
         
-        String result = null;
+        String result = "[]";
         
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -123,9 +169,24 @@ public class RegistrationDAO {
             if (conn.isValid(0)) {
                 
                 // INSERT YOUR CODE HERE
+                ps = conn.prepareStatement(QUERY_LIST);
+                
+                ps.setInt(1, studentid);
+                ps.setInt(2, termid);
+                
+                boolean hasresults = ps.execute();
+                
+                
+                
+                if (hasresults) {
+
+                    rs = ps.getResultSet();
+                    DAOUtility.getResultSetAsJson(rs);
+
+                }
                 
             }
-            
+       
         }
         
         catch (Exception e) { e.printStackTrace(); }
@@ -137,7 +198,7 @@ public class RegistrationDAO {
             
         }
         
-        return result;
+        return Jsoner.serialize(result);
         
     }
     
